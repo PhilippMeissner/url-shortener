@@ -10,5 +10,10 @@
   <%= @shortened_link.code %>
 </p>
 
+<p>
+  <strong>Generated link:</strong>
+  <%= link_to absolute_shortened_link_url(@shortened_link.code), absolute_shortened_link_url(@shortened_link.code) %>
+</p>
+
 <%= link_to 'Edit', edit_shortened_link_path(@shortened_link) %> |
 <%= link_to 'Back', shortened_links_path %>

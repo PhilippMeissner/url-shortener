@@ -1,5 +1,14 @@
 class ShortenedLinksController < ApplicationController
+  http_basic_authenticate_with name: 'foo', password: 'bar'
+
   before_action :set_shortened_link, only: %i[ show edit update destroy ]
+
+  def redirect
+    shortened_link = ShortenedLink.find_by_code(params[:code])
+
+    redirect_to shortened_link.original_url and return unless shortened_link.nil?
+    redirect_to shortened_links_path, notice: "Invalid URL - No entry matched your code \"#{params[:code]}\""
+  end
 
   # GET /shortened_links or /shortened_links.json
   def index
@@ -57,13 +66,14 @@ class ShortenedLinksController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_shortened_link
-      @shortened_link = ShortenedLink.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def shortened_link_params
-      params.require(:shortened_link).permit(:original_url, :code)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_shortened_link
+    @shortened_link = ShortenedLink.find(params[:id])
+  end
+
+  # Only allow a list of trusted parameters through.
+  def shortened_link_params
+    params.require(:shortened_link).permit(:original_url, :code)
+  end
 end
