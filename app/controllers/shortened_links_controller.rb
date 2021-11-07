@@ -6,7 +6,13 @@ class ShortenedLinksController < ApplicationController
   def redirect
     shortened_link = ShortenedLink.find_by_code(params[:code])
 
-    redirect_to shortened_link.original_url and return unless shortened_link.nil?
+    if shortened_link.present?
+      shortened_link.views = shortened_link.views + 1
+      if shortened_link.save
+        redirect_to shortened_link.original_url and return
+      end
+    end
+
     redirect_to shortened_links_path, notice: "Invalid URL - No entry matched your code \"#{params[:code]}\""
   end
 
